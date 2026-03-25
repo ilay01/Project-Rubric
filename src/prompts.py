@@ -10,19 +10,34 @@ def get_intent_classification_prompt() -> PromptTemplate:
         input_variables=["user_input", "conversation_history"],
         template="""You are an intent classifier for a document processing assistant.
 
-Given the user input and conversation history, classify the user's intent into one of these categories:
-- qa: Questions about documents or records that do not require calculations.
-- summarization: Requests to summarize or extract key points from documents that do not require calculations.
-- calculation: Mathematical operations or numerical computations. Or questions about documents that may require calculations
-- unknown: Cannot determine the intent clearly
+        Given the user input and conversation history, classify the user's intent into one of these categories:
+        - qa: Questions about documents or records that do not require calculations.
+            Example: "Who signed the contract?" or "What is the expiration date?"
+        - summarization: Requests to summarize or extract key points from documents that do not require calculations.
+            Example: "Give me a TL;DR of the last three pages" or "Summarize the risks."
+        - calculation: Mathematical operations or numerical computations. Or questions about documents that may require calculations
+            Example: "What is the total of all invoices?" or "Calculate the average tax rate."
+        - unknown: Cannot determine the intent clearly
+            Example: "What is the weather?" or "asdf123."
 
-User Input: {user_input}
+        User Input: {user_input}
 
-Recent Conversation History:
-{conversation_history}
+        Recent Conversation History:
+        {conversation_history}
 
-Analyze the user's request and classify their intent with a confidence score and brief reasoning.
-"""
+        1. Analyze the user's request against the categories above.
+        2. Assign a 'confidence_score' from 0.0 to 1.0 based on these criteria:
+        - 0.9+: Direct match to category (e.g., "What is 5+5?" -> calculation).
+        - 0.7: Likely match, but relies heavily on conversation history.
+        - 0.5: Ambiguous or overlapping categories (e.g., "Show me the data").
+        - <0.3: Nonsense or completely unrelated to document processing.
+        3. Provide a **reasoning** string explaining why you chose this intent.
+        4. Return ONLY a JSON object with the following keys: "intent", "confidence_score", "reasoning".
+
+
+
+
+        """
     )
 
 

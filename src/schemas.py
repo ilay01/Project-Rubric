@@ -20,10 +20,10 @@ class AnswerResponse(BaseModel):
     """Structured response for Q&A tasks - TO BE IMPLEMENTED"""
     question: str = Field(description=" The original user question")
     answer: str  = Field(description="The generated answer")
-    source: List[str] = Field(description=" List of source document IDs used")
-    confidence: float = Field(description="Confidence score between 0 and 1")
-    timestamp: datetime = Field(description="When the response was generated")
-    pass
+    source: List[str] = Field(default_factory=list,description=" List of source document IDs used")
+    confidence: float = Field(default=0.0, description="Confidence score between 0 and 1")
+    timestamp: datetime = Field(default_factory= datetime.now, description="When the response was generated")
+    
 
 
 
@@ -56,8 +56,13 @@ class UpdateMemoryResponse(BaseModel):
 # Refer to README.md Task 1.2 for detailed field requirements.
 class UserIntent(BaseModel):
     """User intent classification - TO BE IMPLEMENTED"""
-    intent_type: Literal["qa", "summarization", "calculation", "unknown"]
-    confidence: float = Field(description="Confidence in classification")
+    intent_type: Literal["qa", "summarization", "calculation", "unknown"] = Field(description="Type of user intent")
+    confidence: float = Field(
+        ..., 
+        ge=0.0, 
+        le=1.0, 
+        description="Confidence score between 0 and 1"
+    )
     reasoning: str = Field(description="Explanation for the classification")
 
 

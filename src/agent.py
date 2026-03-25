@@ -5,7 +5,8 @@ from langchain_core.runnables import RunnableConfig
 from pydantic import BaseModel
 from langgraph.graph import StateGraph, END
 from langgraph.graph.message import add_messages
-from langgraph.prebuilt import create_react_agent, tools_condition, ToolNode
+from langchain.agents import create_agent
+from langgraph.prebuilt import  tools_condition, ToolNode
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, SystemMessage, ToolMessage
 import re
 import operator
@@ -54,7 +55,7 @@ Dict[str, Any], List[str]):
         tools
     )
 
-    agent = create_react_agent(
+    agent = create_agent(
         model=llm_with_tools,  # Use the bound model
         tools=tools,
         response_format=response_schema,
@@ -88,6 +89,7 @@ def classify_intent(state: AgentState, config: RunnableConfig) -> AgentState:
     user_input = user_input = state.get("user_input", "")
     # prompt = format(get_intent_classification_prompt(user_input, history))
     prompt_template = get_intent_classification_prompt()
+    # LEARNING format packt den Content zu den Orten der Variable richtig rein
     prompt = prompt_template.format(
     user_input=user_input,
     conversation_history=history
